@@ -9,6 +9,8 @@
         "*.tcc": "cpp",
         "random": "cpp",
         "ostream": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "sstream": "cpp",
+        "regex": "cpp"
     }
 }
